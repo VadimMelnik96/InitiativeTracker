@@ -1,4 +1,4 @@
-from src.schemas.users import UserSchemaAdd, UserSchemaUpdate
+from src.schemas.users import UserSchemaAdd, UserSchemaUpdate, UserSchema
 from src.lib.repository import Repository
 
 class UserService:
@@ -13,7 +13,7 @@ class UserService:
 
     async def get_all_users(self):
         result = await self.repo.get_all()
-        return result
+        return [UserSchema.model_validate(row, from_attributes=True) for row in result]
 
     async def get_user_by_id(self, id: int):
         result = await self.repo.get_one(id)
@@ -23,3 +23,8 @@ class UserService:
         user_dict = new_user.model_dump()
         result = await self.repo.update(id, user_dict)
         return result
+
+    async def delete_user(self, id: int):
+        result = await self.repo.delete(id)
+        return result
+

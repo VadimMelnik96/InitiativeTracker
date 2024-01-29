@@ -33,6 +33,9 @@ class User(Base):
     username: Mapped[str]
     password: Mapped[str]
     email: Mapped[str]
+    monsters: Mapped[List["Monster"]] = relationship(back_populates="user")
+    players: Mapped[List["Player"]] = relationship(back_populates="user")
+    encounters: Mapped[List["Encounter"]] = relationship(back_populates="user")
 
 
 class Player(Base):
@@ -42,9 +45,10 @@ class Player(Base):
     initiative: Mapped[int] = mapped_column(default=0)
     player_nick: Mapped[str] = mapped_column(String(120))
     armour_class: Mapped[int]
-    conditions: Mapped[Optional[List["Condition"]]] = mapped_column(ARRAY(String))
+    conditions: Mapped[List["Condition"]] = mapped_column(ARRAY(String))
     concentration: Mapped[bool] = mapped_column(default=False)
     note: Mapped[str] = mapped_column(String(300), nullable=True)
+    user: Mapped["User"] = relationship(back_populates="players")
     player_encounters: Mapped[List["Encounter"]] = relationship(back_populates="players_in_encounter",
                                                                 secondary="encountered_players")
 
@@ -60,6 +64,7 @@ class Monster(Base):
     conditions: Mapped[Optional[List["Condition"]]] = mapped_column(ARRAY(String))
     concentration: Mapped[bool] = mapped_column(default=False)
     note: Mapped[str] = mapped_column(String(300), nullable=True)
+    user: Mapped["User"] = relationship(back_populates="monsters")
     monster_encounters: Mapped[List["Encounter"]] = relationship(back_populates="monsters_in_encounter",
                                                                  secondary="encountered_monsters")
 
@@ -69,6 +74,7 @@ class Encounter(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     encounter_name: Mapped[str]
     user_id: Mapped[int] = mapped_column(ForeignKey(User.id, ondelete="CASCADE"))
+    user: Mapped["User"] = relationship(back_populates="encounters")
     monsters_in_encounter: Mapped[List["Monster"]] = relationship(back_populates="monster_encounters",
                                                                   secondary="encountered_monsters")
     players_in_encounter: Mapped[List["Player"]] = relationship(back_populates="player_encounters",

@@ -1,4 +1,4 @@
-from src.schemas.monsters import MonsterSchemaAdd, MonsterSchemaUpdate
+from src.schemas.monsters import MonsterSchemaAdd, MonsterSchemaUpdate, MonsterSchema
 from src.lib.repository import Repository
 
 class MonsterService:
@@ -13,14 +13,18 @@ class MonsterService:
 
     async def get_all_monsters(self):
         result = await self.repo.get_all()
-        return result
+        return [MonsterSchema.model_validate(row, from_attributes=True) for row in result]
 
     async def get_monster_by_id(self, id: int):
         result = await self.repo.get_one(id)
         return result
 
-    async def update_monster(self, update_monster: MonsterSchemaUpdate):
+    async def update_monster(self, id: int, update_monster: MonsterSchemaUpdate):
         monster_dict = update_monster.model_dump()
-        updated_monster = await self.repo.update(monster_dict)
+        updated_monster = await self.repo.update(id, monster_dict)
         return updated_monster
+
+    async def delete_monster(self, monster_id: int):
+        monster_to_delete = await self.repo.delete(monster_id)
+        return monster_to_delete
 

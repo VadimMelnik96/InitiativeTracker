@@ -1,3 +1,5 @@
+from src.repositories.encounters import EncounterRepository
+from src.servises.encounters import EncounterService
 from src.servises.users import UserService
 from src.servises.monsters import MonsterService
 from src.servises.players import PlayerService
@@ -13,3 +15,6 @@ def monster_service():
 
 def player_service():
     return PlayerService(PlayerRepository)
+
+def encounter_service():
+    return EncounterService(EncounterRepository)

@@ -11,6 +11,11 @@ router = APIRouter(
     tags=["monsters"]
 )
 
+@router.delete("/{id}")
+async def delete_monster_by_id(id: int,
+                               monster_serv: Annotated[MonsterService, Depends(monster_service)]):
+    monster_to_delete = await monster_serv.delete_monster(id)
+    return {"monster deleted": monster_to_delete}
 
 @router.get('/')
 async def get_all_monsters(monster_serv: Annotated[MonsterService, Depends(monster_service)]):
@@ -30,7 +35,7 @@ async def create_monster(monster: MonsterSchemaAdd,
     return {"monster_id": monster}
 
 @router.patch("/{monster_id}")
-async def update_monster(monster_id:int,
+async def update_monster(monster_id: int,
                          monster: MonsterSchemaUpdate,
                          monster_serv: Annotated[MonsterService, Depends(monster_service)]):
     update_monster_id = monster_serv.update_monster(monster_id, monster)

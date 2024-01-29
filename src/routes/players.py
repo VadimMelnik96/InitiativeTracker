@@ -38,3 +38,9 @@ async def update_player(player_id: int,
                         player_serv: Annotated[PlayerService, Depends(player_service)]):
     updated_player = await player_serv.update_player(player_id, update_player)
     return {"Player info updated": updated_player}
+
+@router.delete("/{id}")
+async def delete_player_by_id(id: int,
+                              player_serv: Annotated[PlayerService, Depends(player_service)]):
+    player_to_delete = await player_serv.delete_player(id)
+    return {"player deleted": player_to_delete}

@@ -9,7 +9,7 @@ from alembic import context
 import os
 import sys
 
-from src.config import DB_HOST, DB_USER, DB_PORT, DB_PASS, DB_NAME
+from config import DB_HOST, DB_USER, DB_PORT, DB_PASS, DB_NAME
 from src import models
 
 sys.path.append(os.path.join(sys.path[0], 'src'))

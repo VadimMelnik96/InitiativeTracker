@@ -22,6 +22,12 @@ async def get_user_by_id(id: int,
     user = await user_serv.get_user_by_id(id)
     return {"user": user}
 
+@router.delete("/{id}")
+async def delete_user_by_id(id: int,
+                            user_serv: Annotated[UserService, Depends(user_service)]):
+    user_to_delete = await user_serv.delete_user(id)
+    return {"User deleted": user_to_delete}
+
 @router.patch("{id}")
 async def update_user(id: int,
                       user: UserSchemaUpdate,
