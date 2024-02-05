@@ -1,5 +1,9 @@
-from src.schemas.users import UserSchemaAdd, UserSchemaUpdate, UserSchema
+from src.schemas.encounters import EncounterSchema
+from src.schemas.monsters import MonsterSchema
+from src.schemas.players import PlayerSchema
+from src.schemas.users import UserSchemaAdd, UserSchemaUpdate, UserSchema, UserSchemaName
 from src.lib.repository import Repository
+
 
 class UserService:
 
@@ -19,6 +23,14 @@ class UserService:
         result = await self.repo.get_one(id)
         return result
 
+    async def get_user_monsters(self, username: str):
+        result = await self.repo.get_user_monsters(username)
+        return [MonsterSchema.model_validate(row, from_attributes=True) for row in result]
+
+    async def get_user_by_username(self, username: str):
+        result = await self.repo.get_user_by_username(username)
+        return result
+
     async def update_user(self, id: int, new_user: UserSchemaUpdate):
         user_dict = new_user.model_dump()
         result = await self.repo.update(id, user_dict)
@@ -28,3 +40,10 @@ class UserService:
         result = await self.repo.delete(id)
         return result
 
+    async def get_user_players(self, username: str):
+        result = await self.repo.get_user_players(username)
+        return [PlayerSchema.model_validate(row, from_attributes=True) for row in result]
+
+    async def get_user_encounters(self, username: str):
+        result = await self.repo.get_user_encounters(username)
+        return [EncounterSchema.model_validate(row, from_attributes=True) for row in result]

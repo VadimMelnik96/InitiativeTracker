@@ -7,14 +7,18 @@ from src.repositories.users import UserRepository
 from src.repositories.monsters import MonsterRepository
 from src.repositories.players import PlayerRepository
 
+
 def user_service():
     return UserService(UserRepository)
+
 
 def monster_service():
     return MonsterService(MonsterRepository)
 
+
 def player_service():
     return PlayerService(PlayerRepository)
+
 
 def encounter_service():
     return EncounterService(EncounterRepository)

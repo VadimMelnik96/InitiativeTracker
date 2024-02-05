@@ -12,8 +12,14 @@ class UserSchemaAdd(BaseModel):
     username: str
     password: str
     email: str
+    active: bool
+
 
 class UserSchemaUpdate(BaseModel):
     username: str
     password: str
+    active: bool
 
+
+class UserSchemaName(BaseModel):
+    username: str

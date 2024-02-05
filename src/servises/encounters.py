@@ -1,5 +1,7 @@
 from src.lib.repository import Repository
 from src.schemas.encounters import EncounterSchemaAdd, EncounterSchemaUpdate, EncounterSchema
+from src.schemas.monsters import MonsterSchemaAdd
+from src.schemas.players import PlayerSchemaAdd
 
 
 class EncounterService:
@@ -20,13 +22,33 @@ class EncounterService:
         encounter = await self.repo.get_one(id)
         return encounter
 
-    async def update_encounter_by_id(self, encounter_id: int,
-                                     encounter_to_update: EncounterSchemaUpdate):
+    async def update_encounter_by_id(
+            self, encounter_id: int,
+            encounter_to_update: EncounterSchemaUpdate
+    ):
         new_encounter_data = encounter_to_update.model_dump()
         updated_encounter = await self.repo.update(encounter_id, new_encounter_data)
         return updated_encounter
 
     async def delete_encounter(self, encounter_id: int):
         result = await self.repo.delete(encounter_id)
+        return result
+
+    async def add_monster(self, encounter_id: int, monster_id: int):
+        result = await self.repo.add_monsters_to_encounter(encounter_id, monster_id)
+        return result
+
+    async def add_player(self, encounter_id: int, player_id: int):
+        result = await self.repo.add_player_to_encounter(encounter_id, player_id)
+        return result
+
+    async def add_new_monster(self, encounter_id: int, monster: MonsterSchemaAdd):
+        monster_dict = monster.model_dump()
+        result = await self.repo.add_new_monster_to_encounter(encounter_id, monster_dict)
+        return result
+
+    async def add_new_player(self, encounter_id: int, player: PlayerSchemaAdd):
+        player_dict = player.model_dump()
+        result = await self.repo.add_new_player_to_encounter(encounter_id, player_dict)
         return result
 

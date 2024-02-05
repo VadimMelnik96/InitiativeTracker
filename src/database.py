@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 from config import DB_NAME, DB_PASS, DB_PORT, DB_HOST, DB_USER
 
 
-class DB_CONN:
+class Db_Conn:
 
     def __init__(self, db_url):
         self.db_url = db_url
@@ -19,7 +19,7 @@ DATABASE_URL_async = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PO
 
 # async_session = async_sessionmaker(async_engine)
 
-database = DB_CONN(DATABASE_URL_async)
+database = Db_Conn(DATABASE_URL_async)
 async_session = database.get_session_fabric()
 
 

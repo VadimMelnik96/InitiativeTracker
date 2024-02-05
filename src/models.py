@@ -1,12 +1,11 @@
 import enum
 from typing import Optional, List
 
-from sqlalchemy import String, ForeignKey
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy import String, ForeignKey, Boolean
+from sqlalchemy.dialects.postgresql import ARRAY, ENUM
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
-# Подумать насчет энума для истощений
 class Condition(enum.Enum):
     BLINDED = "Blinded"
     CHARMED = "Charmed"
@@ -30,9 +29,10 @@ class Base(DeclarativeBase):
 class User(Base):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str]
+    username: Mapped[str] = mapped_column(String, unique=True)
     password: Mapped[str]
     email: Mapped[str]
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
     monsters: Mapped[List["Monster"]] = relationship(back_populates="user")
     players: Mapped[List["Player"]] = relationship(back_populates="user")
     encounters: Mapped[List["Encounter"]] = relationship(back_populates="user")
@@ -45,12 +45,19 @@ class Player(Base):
     initiative: Mapped[int] = mapped_column(default=0)
     player_nick: Mapped[str] = mapped_column(String(120))
     armour_class: Mapped[int]
-    conditions: Mapped[List["Condition"]] = mapped_column(ARRAY(String))
+    conditions: Mapped[Optional[List[Condition]]] = mapped_column(ARRAY(ENUM(
+        Condition,
+        name="condition",
+        create_type=False)),
+        nullable=True
+    ) # mapped_column(ARRAY(String), nullable=True)
     concentration: Mapped[bool] = mapped_column(default=False)
     note: Mapped[str] = mapped_column(String(300), nullable=True)
     user: Mapped["User"] = relationship(back_populates="players")
-    player_encounters: Mapped[List["Encounter"]] = relationship(back_populates="players_in_encounter",
-                                                                secondary="encountered_players")
+    player_encounters: Mapped[List["Encounter"]] = relationship(
+        back_populates="players_in_encounter",
+        secondary="encountered_players"
+    )
 
 
 class Monster(Base):
@@ -61,12 +68,21 @@ class Monster(Base):
     monster_nick: Mapped[str] = mapped_column(String(120))
     armour_class: Mapped[int]
     hp: Mapped[int]
-    conditions: Mapped[Optional[List["Condition"]]] = mapped_column(ARRAY(String))
+    conditions: Mapped[Optional[List[Condition]]] = mapped_column(ARRAY(ENUM(
+        Condition,
+        name="condition",
+        create_type=False)),
+        nullable=True
+    )
     concentration: Mapped[bool] = mapped_column(default=False)
     note: Mapped[str] = mapped_column(String(300), nullable=True)
     user: Mapped["User"] = relationship(back_populates="monsters")
-    monster_encounters: Mapped[List["Encounter"]] = relationship(back_populates="monsters_in_encounter",
-                                                                 secondary="encountered_monsters")
+    monster_encounters: Mapped[List["Encounter"]] = relationship(
+        back_populates="monsters_in_encounter",
+        secondary="encountered_monsters",
+        lazy="selectin"
+
+    )
 
 
 class Encounter(Base):
@@ -75,19 +91,41 @@ class Encounter(Base):
     encounter_name: Mapped[str]
     user_id: Mapped[int] = mapped_column(ForeignKey(User.id, ondelete="CASCADE"))
     user: Mapped["User"] = relationship(back_populates="encounters")
-    monsters_in_encounter: Mapped[List["Monster"]] = relationship(back_populates="monster_encounters",
-                                                                  secondary="encountered_monsters")
-    players_in_encounter: Mapped[List["Player"]] = relationship(back_populates="player_encounters",
-                                                                secondary="encountered_players")
+    monsters_in_encounter: Mapped[List["Monster"]] = relationship(
+        back_populates="monster_encounters",
+        secondary="encountered_monsters",
+        lazy="selectin"
+    )
+    players_in_encounter: Mapped[List["Player"]] = relationship(
+        back_populates="player_encounters",
+        secondary="encountered_players",
+        lazy="selectin"
+    )
 
 
 class EncounteredPlayers(Base):
     __tablename__ = "encountered_players"
-    encounter_id: Mapped[int] = mapped_column(ForeignKey("encounters.id", ondelete="CASCADE"), primary_key=True)
-    player_id: Mapped[int] = mapped_column(ForeignKey("players.id", ondelete="CASCADE"), primary_key=True)
+    encounter_id: Mapped[int] = mapped_column(ForeignKey(
+        "encounters.id",
+        ondelete="CASCADE"),
+        primary_key=True
+    )
+    player_id: Mapped[int] = mapped_column(ForeignKey(
+        "players.id",
+        ondelete="CASCADE"),
+        primary_key=True
+    )
 
 
 class EncounteredMonsters(Base):
     __tablename__ = "encountered_monsters"
-    encounter_id: Mapped[int] = mapped_column(ForeignKey("encounters.id", ondelete="CASCADE"), primary_key=True)
-    monster_id: Mapped[int] = mapped_column(ForeignKey("monsters.id", ondelete="CASCADE"), primary_key=True)
+    encounter_id: Mapped[int] = mapped_column(ForeignKey(
+        "encounters.id",
+        ondelete="CASCADE"),
+        primary_key=True
+    )
+    monster_id: Mapped[int] = mapped_column(ForeignKey(
+        "monsters.id",
+        ondelete="CASCADE"),
+        primary_key=True
+    )
