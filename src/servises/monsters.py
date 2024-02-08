@@ -4,11 +4,10 @@ from src.lib.repository import Repository
 class MonsterService:
 
     def __init__(self, repo: Repository):
-        self.repo = repo()
+        self.repo = repo
 
     async def create_monster(self, monster: MonsterSchemaAdd):
-        monster_dict = monster.model_dump()
-        new_monster = await self.repo.create(monster_dict)
+        new_monster = await self.repo.create(monster)
         return new_monster
 
     async def get_all_monsters(self):
@@ -20,8 +19,8 @@ class MonsterService:
         return result
 
     async def update_monster(self, id: int, update_monster: MonsterSchemaUpdate):
-        monster_dict = update_monster.model_dump()
-        updated_monster = await self.repo.update(id, monster_dict)
+
+        updated_monster = await self.repo.update(id, update_monster)
         return updated_monster
 
     async def delete_monster(self, monster_id: int):

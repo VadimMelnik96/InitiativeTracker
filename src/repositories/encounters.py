@@ -1,17 +1,18 @@
-from sqlalchemy import select, insert
+from sqlalchemy import insert
 from sqlalchemy.orm import selectinload
 
-from src.database import async_session
 from src.lib.repository import SQLAlchemyRepository
-from src.models import Encounter, Monster, Player
-
+# from src.models import Encounter, Monster, Player
+from src.model.encounters import Encounter
+from src.model.monsters import Monster
+from src.model.players import Player
 
 
 class EncounterRepository(SQLAlchemyRepository):
     model = Encounter
 
     async def add_monsters_to_encounter(self, encounter_id: int, monster_id: int):
-        async with async_session() as session:
+        async with self.session as session:
             encounter = await session.get(Encounter, encounter_id)
             monster = await session.get(Monster, monster_id)
             encounter.monsters_in_encounter.append(monster)
@@ -24,7 +25,7 @@ class EncounterRepository(SQLAlchemyRepository):
             return full_encounter
 
     async def add_player_to_encounter(self, encounter_id: int, player_id: int):
-        async with async_session() as session:
+        async with self.session as session:
             encounter = await session.get(Encounter, encounter_id)
             player = await session.get(Player, player_id)
             encounter.players_in_encounter.append(player)
@@ -37,7 +38,7 @@ class EncounterRepository(SQLAlchemyRepository):
             return full_encounter
 
     async def add_new_monster_to_encounter(self, encounter_id: int, monster: dict):
-        async with async_session() as session:
+        async with self.session as session:
             inserted_monster = insert(Monster).values(**monster).returning(Monster.id)
             result = await session.execute(inserted_monster)
             monster_id = result.scalar_one()
@@ -46,7 +47,7 @@ class EncounterRepository(SQLAlchemyRepository):
             return res
 
     async def add_new_player_to_encounter(self, encounter_id: int, player: dict):
-        async with async_session() as session:
+        async with self.session as session:
             inserted_player = insert(Player).values(**player).returning(Player.id)
             result = await session.execute(inserted_player)
             player_id = result.scalar_one()

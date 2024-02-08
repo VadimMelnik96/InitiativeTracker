@@ -10,9 +10,9 @@ import os
 import sys
 
 from config import DB_HOST, DB_USER, DB_PORT, DB_PASS, DB_NAME
-from src import models
+from src.model.base import Base
 
-sys.path.append(os.path.join(sys.path[0], 'src'))
+sys.path.append(os.path.join(sys.path[0], 'src/model'))
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -35,7 +35,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = models.Base.metadata
+target_metadata = Base.metadata
 
 
 

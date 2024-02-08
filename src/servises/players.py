@@ -5,11 +5,10 @@ from src.lib.repository import Repository
 class PlayerService:
 
     def __init__(self, repo: Repository):
-        self.repo = repo()
+        self.repo = repo
 
     async def create_player(self, player: PlayerSchemaAdd):
-        player_dict = player.model_dump()
-        new_player = await self.repo.create(player_dict)
+        new_player = await self.repo.create(player)
         return new_player
 
     async def get_all_players(self):

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 
 from src.auth.auth import get_hashed_password, get_current_active_user
 from src.dependencies.dependencies import user_service
-from src.models import User
+from src.model.users import User
 from src.schemas.users import UserSchemaAdd, UserSchemaUpdate, UserSchema
 from src.servises.users import UserService
 

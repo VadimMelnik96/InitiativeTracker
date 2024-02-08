@@ -1,3 +1,5 @@
+import datetime
+
 from pydantic import BaseModel
 
 
@@ -6,6 +8,8 @@ class UserSchema(BaseModel):
     username: str
     password: str
     email: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
 
 
 class UserSchemaAdd(BaseModel):

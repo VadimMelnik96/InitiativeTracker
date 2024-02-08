@@ -10,7 +10,8 @@ import jwt
 
 from src.auth.token_schemas import TokenData, Token
 from src.dependencies.dependencies import user_service
-from src.models import User
+#from src.models import User
+from src.model.users import User
 from src.servises.users import UserService
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30

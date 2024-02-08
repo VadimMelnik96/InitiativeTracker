@@ -7,11 +7,10 @@ from src.schemas.players import PlayerSchemaAdd
 class EncounterService:
 
     def __init__(self, repo: Repository):
-        self.repo = repo()
+        self.repo = repo
 
     async def create_encounter(self, encounter: EncounterSchemaAdd):
-        encounter_dict = encounter.model_dump()
-        new_encounter = await self.repo.create(encounter_dict)
+        new_encounter = await self.repo.create(encounter)
         return new_encounter
 
     async def get_all_encounters(self):
@@ -20,14 +19,16 @@ class EncounterService:
 
     async def get_encounters_by_id(self, id: int):
         encounter = await self.repo.get_one(id)
-        return encounter
+        creatures = sorted(
+            list(encounter.players_in_encounter) + list(encounter.monsters_in_encounter),
+            key=lambda x: x.initiative, reverse=True)
+        return [encounter.encounter_name, creatures]
 
     async def update_encounter_by_id(
             self, encounter_id: int,
             encounter_to_update: EncounterSchemaUpdate
     ):
-        new_encounter_data = encounter_to_update.model_dump()
-        updated_encounter = await self.repo.update(encounter_id, new_encounter_data)
+        updated_encounter = await self.repo.update(encounter_id, encounter_to_update)
         return updated_encounter
 
     async def delete_encounter(self, encounter_id: int):

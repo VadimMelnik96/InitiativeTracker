@@ -1,7 +1,8 @@
+import datetime
 from typing import Optional, List
 
 from pydantic import BaseModel, ConfigDict
-from src.models import Condition
+from src.model.base import Condition
 
 class CustomBaseModel(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -17,6 +18,8 @@ class MonsterSchema(CustomBaseModel):
     conditions: Optional[List[Condition]]
     concentration: bool = False
     note: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
 
 
 class MonsterSchemaAdd(CustomBaseModel):

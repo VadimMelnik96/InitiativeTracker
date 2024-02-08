@@ -52,6 +52,7 @@ async def update_encounter(
     update_encounter_id = encounter_serv.update_encounter_by_id(encounter_id, encounter)
     return {"Encounter info changed": update_encounter_id}
 
+
 @router.post("/add_monster")
 async def add_monster_to_encounter(
         encounter_id: int,
@@ -70,7 +71,6 @@ async def add_monster_to_encounter(
 ):
     result = await encounter_serv.add_player(encounter_id, player_id)
     return {"Player added": result}
-
 
 
 @router.post("/add_new_monster")
