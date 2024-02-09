@@ -5,7 +5,6 @@ from sqlalchemy.dialects.postgresql import ARRAY, ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
-
 class Monster(Base):
     __tablename__ = "monsters"
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -27,7 +26,6 @@ class Monster(Base):
         back_populates="monsters_in_encounter",
         secondary="encountered_monsters",
         lazy="selectin"
-
     )
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]

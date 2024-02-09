@@ -12,8 +12,8 @@ class PlayerService:
         return new_player
 
     async def get_all_players(self):
-        players = await self.repo.get_all()
-        return [PlayerSchema.model_validate(row, from_attributes=True) for row in players]
+        players = await self.repo.get_all_players()
+        return players
 
     async def get_player_by_id(self, player_id: int):
         player = await self.repo.get_one(player_id)

@@ -11,15 +11,14 @@ class MonsterService:
         return new_monster
 
     async def get_all_monsters(self):
-        result = await self.repo.get_all()
-        return [MonsterSchema.model_validate(row, from_attributes=True) for row in result]
+        result = await self.repo.get_all_monsters()
+        return result
 
     async def get_monster_by_id(self, id: int):
         result = await self.repo.get_one(id)
         return result
 
     async def update_monster(self, id: int, update_monster: MonsterSchemaUpdate):
-
         updated_monster = await self.repo.update(id, update_monster)
         return updated_monster
 
