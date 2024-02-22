@@ -10,9 +10,9 @@ import os
 import sys
 
 from config import DB_HOST, DB_USER, DB_PORT, DB_PASS, DB_NAME
-from src.model.base import Base
+from migrations.base import Base
 
-sys.path.append(os.path.join(sys.path[0], 'src/model'))
+sys.path.append(os.path.join(sys.path[0], 'src'))
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

@@ -16,3 +16,4 @@ class User(Base):
     encounters: Mapped[List["Encounter"]] = relationship(back_populates="user")
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False)

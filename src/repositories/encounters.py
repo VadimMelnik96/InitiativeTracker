@@ -1,8 +1,6 @@
 from sqlalchemy import insert
 from sqlalchemy.orm import selectinload
-
 from src.lib.repository import SQLAlchemyRepository
-# from src.models import Encounter, Monster, Player
 from src.model.encounters import Encounter
 from src.model.monsters import Monster
 from src.model.players import Player

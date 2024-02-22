@@ -87,6 +87,14 @@ async def get_current_active_user(
     return current_user
 
 
+async def get_admin(
+        current_active_user: Annotated[User, Depends(get_current_active_user)]
+):
+    if not current_active_user.is_admin:
+        raise HTTPException(status_code=400, detail="Only for admin")
+
+
+
 @auth_router.post("/token")
 async def login_for_access_token(
         form_data: Annotated[OAuth2PasswordRequestForm, Depends()],

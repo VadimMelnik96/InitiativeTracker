@@ -22,7 +22,7 @@ class PlayerSchema(CustomBaseModel):
 
 
 class PlayerSchemaAdd(CustomBaseModel):
-    user_id: int
+    user_id: int = None
     initiative: int = 0
     player_nick: str
     armour_class: int
@@ -32,6 +32,14 @@ class PlayerSchemaAdd(CustomBaseModel):
 
 
 class PlayerSchemaUpdate(CustomBaseModel):
+    initiative: int = 0
+    player_nick: str
+    armour_class: int
+    conditions: Optional[List[Condition]]
+    concentration: bool = False
+    note: str
+
+class PlayerSchemaShow(CustomBaseModel):
     initiative: int = 0
     player_nick: str
     armour_class: int

@@ -10,6 +10,7 @@ class UserSchema(BaseModel):
     email: str
     created_at: datetime.datetime
     updated_at: datetime.datetime
+    is_admin: bool = False
 
 
 class UserSchemaAdd(BaseModel):
@@ -17,6 +18,10 @@ class UserSchemaAdd(BaseModel):
     password: str
     email: str
     active: bool
+
+
+class UserSchemaAddAdmin(UserSchemaAdd):
+    is_admin: bool
 
 
 class UserSchemaUpdate(BaseModel):

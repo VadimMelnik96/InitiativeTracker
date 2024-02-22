@@ -23,7 +23,7 @@ class MonsterSchema(CustomBaseModel):
 
 
 class MonsterSchemaAdd(CustomBaseModel):
-    user_id: int
+    user_id: int = None
     initiative: int = 0
     monster_nick: str
     armour_class: int
@@ -42,3 +42,11 @@ class MonsterSchemaUpdate(CustomBaseModel):
     concentration: bool = False
     note: str
 
+class MonsterSchemaShow(CustomBaseModel):
+    initiative: int
+    monster_nick: str
+    armour_class: int
+    hp: int
+    conditions: Optional[List[Condition]]
+    concentration: bool = False
+    note: str

@@ -18,6 +18,8 @@ class EncounterSchemaAdd(BaseModel):
     encounter_name: str
     user_id: int
 
+class EncounterSchemaAddForUser(BaseModel):
+    encounter_name: str
 
 class EncounterSchemaUpdate(BaseModel):
     encounter_name: str

@@ -1,26 +1,47 @@
+from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from config import DB_NAME, DB_PASS, DB_PORT, DB_HOST, DB_USER
+from config import DB_NAME, DB_PASS, DB_PORT, DB_HOST, DB_USER, DB_URL_ASYNC
 
 
-class Settings:
-    DATABASE_URL_async = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}?async_fallback=True"
+class DatabaseSettings:
 
-    def get_session_fabric(self):
-        engine = create_async_engine(url=self.DATABASE_URL_async, echo=True, pool_size=5, max_overflow=10)
-        return async_sessionmaker(engine)
+    def __init__(self, url, echo: bool = False):
+        self.engine = create_async_engine(url=url, echo=echo, pool_size=5, max_overflow=10)
+
+        self.session_factory = async_sessionmaker(
+            bind=self.engine,
+            autoflush=False,
+            autocommit=False,
+            expire_on_commit=False
+        )
+
+    @asynccontextmanager
+    async def get_db_session(self):
+        from sqlalchemy import exc
+
+        session: AsyncSession = self.session_factory()
+        try:
+            yield session
+        except exc.SQLAlchemyError:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
+
+    async def get_async_session(self):
+        from sqlalchemy import exc
+
+        session: AsyncSession = self.session_factory()
+        try:
+            yield session
+        except exc.SQLAlchemyError:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
 
 
+db_helper = DatabaseSettings(url=DB_URL_ASYNC, echo=True)
 
-# DATABASE_URL_async = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}?async_fallback=True"
-# async_engine = create_async_engine(url=DATABASE_URL_async, echo=True, pool_size=5, max_overflow=10)
-
-# async_session = async_sessionmaker(async_engine)
-
-database = Settings()
-async_session = database.get_session_fabric()
-
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session() as session:
-        yield session
