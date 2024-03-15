@@ -15,29 +15,31 @@ router = APIRouter(prefix="/encounters", tags=["encounters"])
 
 @router.delete("/{id}")
 async def delete_encounter_by_id(
-        id: int,
+        filters: dict,
         encounter_serv: Annotated[EncounterService, Depends(encounter_service)],
         admin: Annotated[User, Depends(get_admin)]
 ):
-    encounter_to_delete = await encounter_serv.delete_encounter(id)
+    encounter_to_delete = await encounter_serv.delete_encounter(filters)
     return {"encounter deleted": encounter_to_delete}
 
 
 @router.get('/')
 async def get_all_encounters(
         encounter_serv: Annotated[EncounterService, Depends(encounter_service)],
-        admin: Annotated[User, Depends(get_admin)]
+        admin: Annotated[User, Depends(get_admin)],
+        limit: int = 100,
+        offset: int = 0
 ):
-    encounters = await encounter_serv.get_all_encounters()
+    encounters = await encounter_serv.get_all_encounters(limit, offset)
     return {'encounters': encounters}
 
 
 @router.get("/{encounter_id}")
-async def get_encounter_by_id(
-        encounter_id: int,
+async def get_encounter(
+        filters: dict,
         encounter_serv: Annotated[EncounterService, Depends(encounter_service)]
 ):
-    encounter = await encounter_serv.get_encounters_by_id(encounter_id)
+    encounter = await encounter_serv.get_encounter(filters)
     return {"encounter": encounter}
 
 
@@ -53,12 +55,12 @@ async def create_encounter(
 
 @router.patch("/{encounter_id}")
 async def update_encounter(
-        encounter_id: int,
+        filters: dict,
         encounter: EncounterSchemaUpdate,
         encounter_serv: Annotated[EncounterService, Depends(encounter_service)],
         admin: Annotated[User, Depends(get_admin)]
 ):
-    update_encounter_id = encounter_serv.update_encounter_by_id(encounter_id, encounter)
+    update_encounter_id = encounter_serv.update_encounter_by_id(encounter, filters)
     return {"Encounter info changed": update_encounter_id}
 
 

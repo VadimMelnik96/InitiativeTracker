@@ -48,7 +48,7 @@ async def authenticate_user(
         password: str,
         user_serv: Annotated[UserService, Depends(user_service)]
 ):
-    user = await user_serv.get_user_by_username(username)
+    user = await user_serv.get_user({"username": username})
     if not user:
         return False
     if not verify_password(password, user.password):
@@ -73,7 +73,7 @@ async def get_current_user(
         token_data = TokenData(username=username)
     except Exception:
         raise credentials_exception
-    user = await user_serv.get_user_by_username(username=token_data.username)
+    user = await user_serv.get_user({"username": token_data.username})
     if user is None:
         raise credentials_exception
     return user

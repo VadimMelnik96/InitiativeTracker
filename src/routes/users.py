@@ -15,28 +15,22 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.get("/")
-async def get_users(user_serv: Annotated[UserService, Depends(user_service)],
-                    admin: Annotated[User, Depends(get_admin)]):
-    users = await user_serv.get_all_users()
+async def get_users(
+        user_serv: Annotated[UserService, Depends(user_service)],
+        admin: Annotated[User, Depends(get_admin)],
+        limit: int = 100,
+        offset: int = 100
+):
+    users = await user_serv.get_all_users(limit, offset)
     return {"users": users}
 
 
-@router.get("/{id}")
-async def get_user_by_id(
-        id: int,
+@router.get("/{pk}")
+async def get_user(
+        pk: int,
         user_serv: Annotated[UserService, Depends(user_service)]
 ):
-    user = await user_serv.get_user_by_id(id)
-    return {"user": user}
-
-
-@router.get("/user_info/{username}")
-async def get_user_by_username(
-        username: str,
-        user_serv: Annotated[UserService, Depends(user_service)]
-):
-    user = await user_serv.get_user_by_username(username)
-
+    user = await user_serv.get_user({"id": pk})
     return {"user": user}
 
 
@@ -47,22 +41,22 @@ async def read_users_me(
     return current_user
 
 
-@router.delete("/{id}")
-async def delete_user_by_id(
-        id: int,
+@router.delete("/")
+async def delete_user(
+        filters: dict,
         user_serv: Annotated[UserService, Depends(user_service)]
 ):
-    user_to_delete = await user_serv.delete_user(id)
+    user_to_delete = await user_serv.delete_user(filters)
     return {"User deleted": user_to_delete}
 
 
-@router.put("/{id}")
+@router.put("/")
 async def update_user(
-        id: int,
+        filters: dict,
         user: UserSchemaUpdate,
         user_serv: Annotated[UserService, Depends(user_service)]
 ):
-    user_id = await user_serv.update_user(id, user)
+    user_id = await user_serv.update_user(user, filters)
     return {"User info changed": user_id}
 
 
@@ -74,7 +68,7 @@ async def create_user(
     created_user = user.model_copy()
     created_user.password = get_hashed_password(user.password)
     user_id = await user_serv.create_user(created_user)
-    return {"user_id": user_id}
+    return {"user": user_id}
 
 
 @router.get("/me/monsters")

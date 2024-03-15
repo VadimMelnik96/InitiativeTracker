@@ -5,7 +5,5 @@ from src.schemas.players import PlayerSchema
 
 class PlayerRepository(SQLAlchemyRepository):
     model = Player
+    response_dto = PlayerSchema
 
-    async def get_all_players(self):
-        result = await self.get_all()
-        return [PlayerSchema.model_validate(row, from_attributes=True) for row in result]

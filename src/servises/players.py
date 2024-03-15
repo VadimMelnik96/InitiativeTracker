@@ -11,19 +11,19 @@ class PlayerService:
         new_player = await self.repo.create(player)
         return new_player
 
-    async def get_all_players(self):
-        players = await self.repo.get_all_players()
+    async def get_all_players(self, limit: int = 100, offset: int = 0):
+        players = await self.repo.get_list(limit, offset)
         return players
 
-    async def get_player_by_id(self, player_id: int):
-        player = await self.repo.get_one(player_id)
+    async def get_player(self, filters: dict):
+        player = await self.repo.get_one(**filters)
         return player
 
-    async def update_player(self, player_id: int,
-                            update_player: PlayerSchemaUpdate):
-        updated_player = await self.repo.update(player_id, update_player)
+    async def update_player(self,
+                            update_player: PlayerSchemaUpdate, filters: dict):
+        updated_player = await self.repo.update(update_player, **filters)
         return updated_player
 
-    async def delete_player(self, player_id: int):
-        player_to_delete = await self.repo.delete(player_id)
+    async def delete_player(self, filters: dict):
+        player_to_delete = await self.repo.delete(**filters)
         return player_to_delete

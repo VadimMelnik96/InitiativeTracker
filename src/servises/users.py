@@ -13,28 +13,24 @@ class UserService:
         new_user = await self.repo.create(user)
         return new_user
 
-    async def get_all_users(self):
-        result = await self.repo.get_all_users()
+    async def get_all_users(self, limit: int = 100, offset: int = 0):
+        result = await self.repo.get_list(limit, offset)
         return result
 
-    async def get_user_by_id(self, id: int):
-        result = await self.repo.get_one(id)
+    async def get_user(self, filters: dict):
+        result = await self.repo.get_one(**filters)
         return result
 
     async def get_user_monsters(self, user: User):
         result = await self.repo.get_user_monsters(user)
         return result
 
-    async def get_user_by_username(self, username: str):
-        result = await self.repo.get_user_by_username(username)
+    async def update_user(self, new_user: UserSchemaUpdate, filters: dict):
+        result = await self.repo.update(new_user, **filters)
         return result
 
-    async def update_user(self, id: int, new_user: UserSchemaUpdate):
-        result = await self.repo.update(id, new_user)
-        return result
-
-    async def delete_user(self, id: int):
-        result = await self.repo.delete(id)
+    async def delete_user(self, filters: dict):
+        result = await self.repo.delete(**filters)
         return result
 
     async def get_user_players(self, user):

@@ -13,26 +13,27 @@ class EncounterService:
         new_encounter = await self.repo.create(encounter)
         return new_encounter
 
-    async def get_all_encounters(self):
-        result = await self.repo.get_all()
-        return [EncounterSchema.model_validate(row, from_attributes=True) for row in result]
+    async def get_all_encounters(self, limit: int = 100, offset: int = 100):
+        result = await self.repo.get_list(limit, offset)
+        return result
 
-    async def get_encounters_by_id(self, id: int):
-        encounter = await self.repo.get_one(id)
+    async def get_encounter(self, filters: dict):
+        encounter = (await self.repo.get_one(**filters)).model_validate(self.repo.model)
         creatures = sorted(
             list(encounter.players_in_encounter) + list(encounter.monsters_in_encounter),
             key=lambda x: x.initiative, reverse=True)
         return [encounter.encounter_name, creatures]
 
     async def update_encounter_by_id(
-            self, encounter_id: int,
+            self,
+            filters: dict,
             encounter_to_update: EncounterSchemaUpdate
     ):
-        updated_encounter = await self.repo.update(encounter_id, encounter_to_update)
+        updated_encounter = await self.repo.update(encounter_to_update, **filters)
         return updated_encounter
 
-    async def delete_encounter(self, encounter_id: int):
-        result = await self.repo.delete(encounter_id)
+    async def delete_encounter(self, filters: dict):
+        result = await self.repo.delete(**filters)
         return result
 
     async def add_monster(self, encounter_id: int, monster_id: int):
